@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 3.10)
+project(Graph_KIT)
+
+set(CMAKE_CXX_STANDARD 11)
+
+# ====设置可执行文件的输出目录====
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+
+# ====设置动态库的输出目录====
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
+
+# ====设置静态库的输出目录====
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
+
+add_subdirectory(cpp)
+add_subdirectory(src)
