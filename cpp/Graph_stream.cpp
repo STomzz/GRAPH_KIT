@@ -8,7 +8,7 @@ GraphStream &GraphStream::getInstance()
 
 GraphStream::~GraphStream()
 {
-    waitForCompletion();
+    // waitForCompletion();
     for (auto &node : nodes_)
     {
         delete node;
@@ -43,6 +43,7 @@ void GraphStream::addDependency(BaseNode *current_node, BaseNode *dependent_inpu
     addNode(current_node);
     addNode(dependent_input_node);
     {
+        // node_successors_ 未做重复性检查
         std::lock_guard<std::mutex> lock(successor_mutex);
         node_successors_[dependent_input_node].push_back(current_node);
         inDegree_[current_node]++;
@@ -51,8 +52,9 @@ void GraphStream::addDependency(BaseNode *current_node, BaseNode *dependent_inpu
 
 void GraphStream::startNodeExecution(BaseNode *node)
 {
-    std::thread t([this, node]()
-                  {
+    threadPool_.enqueue(
+        [this, node]()
+        {
         try{
             node->execute();
         }
@@ -75,12 +77,12 @@ void GraphStream::startNodeExecution(BaseNode *node)
                 }
             }
         }
+        {
         std::lock_guard<std::mutex> lock(completed_mutex);
         //计数已完成的node数量
         completed_node_count++;
+        }
         cv.notify_all(); });
-    std::lock_guard<std::mutex> lock(threads_mutex);
-    threads_.push_back(std::move(t));
 }
 
 void GraphStream::execute()
@@ -106,13 +108,4 @@ void GraphStream::waitForCompletion()
             {
         std::lock_guard<std::mutex> nodes_lock(nodes_mutex);
         return completed_node_count == nodes_.size(); });
-    // 等待所有线程结束
-    std::lock_guard<std::mutex> threads_lock(threads_mutex);
-    for (auto &t : threads_)
-    {
-        if (t.joinable())
-        {
-            t.join();
-        }
-    }
 }

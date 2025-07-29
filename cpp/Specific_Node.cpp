@@ -25,7 +25,19 @@ AddNode::AddNode(std::initializer_list<BaseNode *> inputs) : BaseNode(inputs)
 
 void AddNode::execute()
 {
+    if (getInputs().empty())
+    {
+        throw std::runtime_error("AddNode requires at least one input");
+    }
     size_t size = getInputs()[0]->getOutput().size();
+    // 校验所有输入的输出长度是否一致
+    for (const auto input : getInputs())
+    {
+        if (input->getOutput().size() != size)
+        {
+            throw std::runtime_error("All inputs to AddNode must have the same output size");
+        }
+    }
     {
         std::lock_guard<std::mutex> lock(outputMutex_);
         output_.resize(size, 0);

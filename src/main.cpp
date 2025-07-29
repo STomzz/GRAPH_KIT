@@ -13,7 +13,7 @@ int main()
         auto *node1 = new MultiplyBy2Node({inputNode});
         auto *node2 = new AddNode({node1, inputNode});
 
-        GraphStream& graph = GraphStream::getInstance();
+        GraphStream &graph = GraphStream::getInstance();
         graph.addDependency(node1, inputNode);
         graph.addDependency(node2, inputNode);
         graph.addDependency(node2, node1);

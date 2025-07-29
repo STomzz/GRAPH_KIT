@@ -7,6 +7,7 @@
 #include <mutex>
 #include <atomic>
 #include <memory>
+#include "ThreadPool.h"
 
 #pragma once
 
@@ -34,9 +35,8 @@ private:
     std::mutex nodes_mutex;
     std::mutex successor_mutex;
     std::mutex completed_mutex;
-    std::mutex threads_mutex;
     std::condition_variable cv;
-    std::vector<std::thread> threads_;
+    ThreadPool threadPool_;
 
     // 线程启动
     void startNodeExecution(BaseNode *node);
