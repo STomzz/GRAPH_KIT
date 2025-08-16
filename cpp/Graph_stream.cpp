@@ -52,37 +52,43 @@ void GraphStream::addDependency(BaseNode *current_node, BaseNode *dependent_inpu
 
 void GraphStream::startNodeExecution(BaseNode *node)
 {
-    threadPool_.enqueue(
-        [this, node]()
+    std::function<void()> task = [this, node]()
+    {
+        try
         {
-        try{
             node->execute();
         }
-        catch(const std::exception & e){
-            std::cerr<<"[ERROR]this node startNodeExecution failed:"<<e.what()<<std::endl;
-            //强制结束等待
+        catch (const std::exception &e)
+        {
+            std::cerr << "[ERROR]this node startNodeExecution failed:" << e.what() << std::endl;
+            // 强制结束等待
             std::lock_guard<std::mutex> lock(completed_mutex);
             completed_node_count++;
             cv.notify_all();
         }
-        //通知后继节点
+        // 通知后继节点
         {
             std::lock_guard<std::mutex> lock_successor(successor_mutex);
-            if(node_successors_.count(node)){
-                for(auto successor : node_successors_[node]){
-                    //若后继的节点满足条件，则启动线程
-                    if(successor->isReady()){
+            if (node_successors_.count(node))
+            {
+                for (auto successor : node_successors_[node])
+                {
+                    // 若后继的节点满足条件，则启动线程
+                    if (successor->isReady())
+                    {
                         startNodeExecution(successor);
                     }
                 }
             }
         }
         {
-        std::lock_guard<std::mutex> lock(completed_mutex);
-        //计数已完成的node数量
-        completed_node_count++;
+            std::lock_guard<std::mutex> lock(completed_mutex);
+            // 计数已完成的node数量
+            completed_node_count++;
         }
-        cv.notify_all(); });
+        cv.notify_all();
+    };
+    threadPool_.enqueue(std::move(task));
 }
 
 void GraphStream::execute()

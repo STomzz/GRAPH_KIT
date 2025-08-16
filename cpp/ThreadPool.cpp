@@ -1,5 +1,3 @@
-#pragma once
-
 #include "ThreadPool.h"
 
 ThreadPool::ThreadPool(size_t threadCount)

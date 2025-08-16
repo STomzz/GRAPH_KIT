@@ -7,22 +7,28 @@
 #include <mutex>
 #include <atomic>
 #include <memory>
+
+// 根据构建选项包含不同的线程池头文件
+#ifdef USE_THREAD_POOL_V1
 #include "ThreadPool.h"
+#else
+#include "ThreadPoolv2.h"
+#endif
 
 #pragma once
 
 class GraphStream
 {
 public:
-    //单例模式
-    GraphStream(const GraphStream &) = delete;//删除拷贝构造
-    GraphStream &operator=(const GraphStream &) = delete;//删除拷贝赋值
+    // 单例模式
+    GraphStream(const GraphStream &) = delete;            // 删除拷贝构造
+    GraphStream &operator=(const GraphStream &) = delete; // 删除拷贝赋值
     // ~GraphStream();
     void addNode(BaseNode *node);
     void addDependency(BaseNode *current_node, BaseNode *dependent_input_node);
     void execute();
     void waitForCompletion();
-    static GraphStream& getInstance();
+    static GraphStream &getInstance();
 
 private:
     GraphStream() = default; // 构造函数
