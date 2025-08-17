@@ -15,14 +15,17 @@ BIN_DIR="$SCRIPT_DIR/bin"
 # 检查命令参数
 if [ $# -gt 2 ]; then
     echo "Error: Too many arguments."
-    echo "Usage: ./build.sh [build(default)|run] [v1|v2(default)]"
-
     echo "Usage: ./build.sh [build(default)|run] [v1|v2|v3(default)]"
     echo "  build: 编译项目(默认)"
     echo "  run:   运行项目"
     echo "  v1:    使用 ThreadPool 版本"
-    echo "  v2:    使用 ThreadPoolV2 版本(默认)"
-    echo "  v3:    使用 ThreadPoolV3 版本 "
+    echo "  v2:    使用 ThreadPoolV2 版本"
+    echo "  v3:    使用 ThreadPoolV3 版本(默认)"
+    echo ""
+    echo "示例:"
+    echo "  ./build.sh build v3    # 使用ThreadPoolV3编译项目"
+    echo "  ./build.sh run         # 运行已编译的程序"
+    echo "  ./build.sh build       # 使用默认v3版本编译"
     echo ""
 
     exit 1
@@ -32,8 +35,8 @@ fi
 
 # 默认使用build命令（无参数时）
 COMMAND=${1:-build}
-# 默认使用v2版本
-THREAD_POOL_VERSION=${2:-v2}
+# 默认使用v3版本
+THREAD_POOL_VERSION=${2:-v3}
 
 case $COMMAND in
     build)

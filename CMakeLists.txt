@@ -2,20 +2,10 @@ cmake_minimum_required(VERSION 3.10)
 project(Graph_KIT)
 
 # 添加选项，用于选择线程池版本
-option(USE_THREAD_POOL_V1 "Use ThreadPoolV1" OFF)
-option(USE_THREAD_POOL_V2 "Use ThreadPoolV2" OFF)
-option(USE_THREAD_POOL_V3 "Use ThreadPoolV3" ON)
+option(USE_THREAD_POOL_V2 "Use ThreadPoolV2 instead of ThreadPool" ON)
+option(USE_THREAD_POOL_V3 "Use ThreadPoolV3 instead of ThreadPool" OFF) # 新增
 
 set(CMAKE_CXX_STANDARD 17)
-
-# 根据选择的线程池版本定义宏
-if(USE_THREAD_POOL_V1)
-    add_definitions(-DUSE_THREAD_POOL_V1)
-elseif(USE_THREAD_POOL_V2)
-    add_definitions(-DUSE_THREAD_POOL_V2)
-elseif(USE_THREAD_POOL_V3)
-    add_definitions(-DUSE_THREAD_POOL_V3)
-endif()
 
 # ====设置可执行文件的输出目录====
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)

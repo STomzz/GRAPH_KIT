@@ -52,6 +52,12 @@ void GraphStream::addDependency(BaseNode *current_node, BaseNode *dependent_inpu
 
 void GraphStream::startNodeExecution(BaseNode *node)
 {
+    // 确保线程池只初始化一次
+    if (!threadPool_)
+    {
+        threadPool_ = std::make_unique<ThreadPoolInterface>(4);
+    }
+
     std::function<void()> task = [this, node]()
     {
         try
@@ -88,7 +94,8 @@ void GraphStream::startNodeExecution(BaseNode *node)
         }
         cv.notify_all();
     };
-    threadPool_.enqueue(std::move(task));
+
+    threadPool_->enqueue(std::move(task));
 }
 
 void GraphStream::execute()

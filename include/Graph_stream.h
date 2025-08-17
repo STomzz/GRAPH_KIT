@@ -9,17 +9,7 @@
 #include <atomic>
 #include <memory>
 
-// 根据构建选项包含不同的线程池头文件
-#ifdef USE_THREAD_POOL_V3
-#include "ThreadPoolV3.h"
-#define THREAD_POOL_TYPE ThreadPoolV3
-#elif defined(USE_THREAD_POOL_V1)
-#include "ThreadPool.h"
-#define THREAD_POOL_TYPE ThreadPool
-#else
-#include "ThreadPoolv2.h"
-#define THREAD_POOL_TYPE ThreadPool
-#endif
+#include "ThreadPoolInterface.h"
 
 class GraphStream
 {
@@ -35,7 +25,7 @@ public:
     static GraphStream &getInstance();
 
 private:
-    GraphStream() = default; // 构造函数
+    GraphStream() : threadPool_(nullptr) {}; // 构造函数
     ~GraphStream();
     std::unordered_set<BaseNode *> nodes_;
     std::unordered_map<BaseNode *, std::vector<BaseNode *>> node_successors_;
@@ -46,7 +36,7 @@ private:
     std::mutex successor_mutex;
     std::mutex completed_mutex;
     std::condition_variable cv;
-    THREAD_POOL_TYPE threadPool_;
+    std::unique_ptr<ThreadPoolInterface> threadPool_;
 
     // 线程启动
     void startNodeExecution(BaseNode *node);

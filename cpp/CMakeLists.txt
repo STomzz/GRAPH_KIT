@@ -18,8 +18,11 @@ elseif(USE_THREAD_POOL_V2)
     message(STATUS "Using ThreadPoolV2")
     list(APPEND Frame_Source_files ${CMAKE_SOURCE_DIR}/cpp/ThreadPoolv2.cpp)
 else()
-    message(STATUS "Using ThreadPoolV1")
+    message(STATUS "Using ThreadPool")
     list(APPEND Frame_Source_files ${CMAKE_SOURCE_DIR}/cpp/ThreadPool.cpp)
+
+    # 为ThreadPool版本定义宏
+    target_compile_definitions(Graph_KIT PRIVATE USE_THREAD_POOL_V1)
 endif()
 
 add_library(Graph_KIT ${Frame_Source_files})
