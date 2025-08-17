@@ -46,6 +46,9 @@ case $COMMAND in
 
         # 创建构建和输出目录(若不存在)
         mkdir -p "$BUILD_DIR" "$BIN_DIR"
+        echo "清理旧的构建文件..."
+        rm -rf "$BUILD_DIR"/*
+
         
         # 进入构建目录并执行编译
         cd "$BUILD_DIR" || exit 1
@@ -53,12 +56,15 @@ case $COMMAND in
         # 根据参数设置CMake选项
         case "$THREAD_POOL_VERSION" in
             v1)
+                echo "使用ThreadPoolV1版本"
                 CMAKE_THREAD_POOL_OPTION="-DUSE_THREAD_POOL_V1=ON"
                 ;;
             v2)
+                echo "使用ThreadPoolV2版本"
                 CMAKE_THREAD_POOL_OPTION="-DUSE_THREAD_POOL_V2=ON"
                 ;;
             v3)
+                echo "使用ThreadPoolV3版本"
                 CMAKE_THREAD_POOL_OPTION="-DUSE_THREAD_POOL_V3=ON"
                 ;;
             *)

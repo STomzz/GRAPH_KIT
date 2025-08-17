@@ -8,38 +8,38 @@
 #include <atomic>
 #include <future>
 
-class ThreadPoolV2
+class ThreadPoolV1
 {
 public:
     // 构造函数：创建指定数量的worker线程（默认使用硬件并发数）
-    explicit ThreadPoolV2(size_t threadCount = std::thread::hardware_concurrency());
+    explicit ThreadPoolV1(size_t threadCount = std::thread::hardware_concurrency());
 
     // 析构函数：停止所有worker线程并等待完成
-    ~ThreadPoolV2();
+    ~ThreadPoolV1();
 
     // 禁止拷贝构造和赋值
-    ThreadPoolV2(const ThreadPoolV2 &) = delete;
-    ThreadPoolV2 &operator=(const ThreadPoolV2 &) = delete;
+    ThreadPoolV1(const ThreadPoolV1 &) = delete;
+    ThreadPoolV1 &operator=(const ThreadPoolV1 &) = delete;
 
-    // 提交任务到线程池
+    // 提交任务到线程池 - 返回future以便获取结果
     template <typename F, typename... Args>
     auto enqueue(F &&f, Args &&...args) -> std::future<typename std::invoke_result<F, Args...>::type>
     {
         using return_type = typename std::invoke_result<F, Args...>::type;
+
         auto task = std::make_shared<std::packaged_task<return_type()>>(
             std::bind(std::forward<F>(f), std::forward<Args>(args)...));
-        auto res = task->get_future();
+
+        std::future<return_type> result = task->get_future();
+
         {
             std::lock_guard<std::mutex> lock(queueMutex_);
-            if (stopFlag_)
-            {
-                throw std::runtime_error("enqueue on stopped ThreadPool");
-            }
             tasks_.emplace([task]()
                            { (*task)(); });
         }
-        condition_.notify_one(); // 唤醒一个等待的worker线程
-        return res;              // 返回future对象
+
+        condition_.notify_one();
+        return result;
     }
 
 private:

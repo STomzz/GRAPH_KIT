@@ -2,7 +2,7 @@
 #include <memory>
 #include <functional>
 #include <future>
-#include "ThreadPoolv3.h"
+#include "ThreadPool.h"
 
 class ThreadPoolInterface
 {
@@ -10,7 +10,7 @@ private:
     class Impl
     {
     public:
-        explicit Impl(size_t threadCount) : threadPoolV3_(std::make_unique<ThreadPoolV3>(threadCount)) {}
+        explicit Impl(size_t threadCount) : threadPool_(std::make_unique<ThreadPool>(threadCount)) {}
         ~Impl() = default;
 
         // 禁止拷贝构造和赋值
@@ -20,11 +20,11 @@ private:
         template <typename F, typename... Args>
         auto enqueue(F &&f, Args &&...args) -> std::future<typename std::invoke_result<F, Args...>::type>
         {
-            return threadPoolV3_->enqueue(std::forward<F>(f), std::forward<Args>(args)...);
+            return threadPool_->enqueue(std::forward<F>(f), std::forward<Args>(args)...);
         }
 
     private:
-        std::unique_ptr<ThreadPoolV3> threadPoolV3_;
+        std::unique_ptr<ThreadPool> threadPool_;
     };
 
 public:

@@ -1,20 +1,20 @@
 #include "ThreadPoolv2.h"
 #include <stdexcept>
 #include <iostream>
-ThreadPool::ThreadPool(size_t threadCount)
+ThreadPoolV2::ThreadPoolV2(size_t threadCount)
 {
-    std::cout << "ThreadPoolv2 constructor called with threadCount: " << threadCount << std::endl;
+    std::cout << "ThreadPoolV2 constructor called with threadCount: " << threadCount << std::endl;
     if (threadCount == 0)
         threadCount = 1; // 至少1个线程
     startWorkers(threadCount);
 }
 
-ThreadPool::~ThreadPool()
+ThreadPoolV2::~ThreadPoolV2()
 {
     stopWorkers();
 }
 
-void ThreadPool::startWorkers(size_t threadCount)
+void ThreadPoolV2::startWorkers(size_t threadCount)
 {
     for (size_t i = 0; i < threadCount; ++i)
     {
@@ -37,7 +37,7 @@ void ThreadPool::startWorkers(size_t threadCount)
     }
 }
 
-void ThreadPool::stopWorkers()
+void ThreadPoolV2::stopWorkers()
 {
     stopFlag_ = true;
     condition_.notify_all(); // 唤醒所有worker线程
@@ -81,6 +81,6 @@ void ThreadPool::stopWorkers()
 // 显式实例化模板，避免链接错误
 // 为void返回类型显式实例化
 template std::future<void>
-ThreadPool::enqueue<std::function<void()>>(std::function<void()> &&);
+ThreadPoolV2::enqueue<std::function<void()>>(std::function<void()> &&);
 // 为int返回类型显式实例化
-template std::future<int> ThreadPool::enqueue<std::function<int()>>(std::function<int()> &&);
+template std::future<int> ThreadPoolV2::enqueue<std::function<int()>>(std::function<int()> &&);

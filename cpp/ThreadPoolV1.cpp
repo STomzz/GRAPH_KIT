@@ -1,18 +1,18 @@
-#include "ThreadPool.h"
+#include "ThreadPoolV1.h"
 
-ThreadPool::ThreadPool(size_t threadCount)
+ThreadPoolV1::ThreadPoolV1(size_t threadCount)
 {
     if (threadCount == 0)
         threadCount = 1; // 至少1个线程
     startWorkers(threadCount);
 }
 
-ThreadPool::~ThreadPool()
+ThreadPoolV1::~ThreadPoolV1()
 {
     stopWorkers();
 }
 
-void ThreadPool::startWorkers(size_t threadCount)
+void ThreadPoolV1::startWorkers(size_t threadCount)
 {
     for (size_t i = 0; i < threadCount; ++i)
     {
@@ -35,7 +35,7 @@ void ThreadPool::startWorkers(size_t threadCount)
     }
 }
 
-void ThreadPool::stopWorkers()
+void ThreadPoolV1::stopWorkers()
 {
     stopFlag_ = true;
     condition_.notify_all(); // 唤醒所有worker线程

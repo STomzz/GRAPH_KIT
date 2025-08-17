@@ -2,8 +2,9 @@ cmake_minimum_required(VERSION 3.10)
 project(Graph_KIT)
 
 # 添加选项，用于选择线程池版本
-option(USE_THREAD_POOL_V2 "Use ThreadPoolV2 instead of ThreadPool" ON)
-option(USE_THREAD_POOL_V3 "Use ThreadPoolV3 instead of ThreadPool" OFF) # 新增
+option(USE_THREAD_POOL_V1 "Use ThreadPoolV1" OFF)
+option(USE_THREAD_POOL_V2 "Use ThreadPoolV2" OFF)
+option(USE_THREAD_POOL_V3 "Use ThreadPoolV3" OFF) # 默认使用V3
 
 set(CMAKE_CXX_STANDARD 17)
 
