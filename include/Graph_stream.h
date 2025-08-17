@@ -1,3 +1,4 @@
+#pragma once
 #include "BaseNode.h"
 #include <unordered_map>
 #include <vector>
@@ -9,13 +10,16 @@
 #include <memory>
 
 // 根据构建选项包含不同的线程池头文件
-#ifdef USE_THREAD_POOL_V1
+#ifdef USE_THREAD_POOL_V3
+#include "ThreadPoolV3.h"
+#define THREAD_POOL_TYPE ThreadPoolV3
+#elif defined(USE_THREAD_POOL_V1)
 #include "ThreadPool.h"
+#define THREAD_POOL_TYPE ThreadPool
 #else
 #include "ThreadPoolv2.h"
+#define THREAD_POOL_TYPE ThreadPool
 #endif
-
-#pragma once
 
 class GraphStream
 {
@@ -42,7 +46,7 @@ private:
     std::mutex successor_mutex;
     std::mutex completed_mutex;
     std::condition_variable cv;
-    ThreadPool threadPool_;
+    THREAD_POOL_TYPE threadPool_;
 
     // 线程启动
     void startNodeExecution(BaseNode *node);

@@ -23,7 +23,24 @@ public:
 
     // 提交任务到线程池
     template <typename F, typename... Args>
-    auto enqueue(F &&f, Args &&...args) -> std::future<typename std::invoke_result<F, Args...>::type>;
+    auto enqueue(F &&f, Args &&...args) -> std::future<typename std::invoke_result<F, Args...>::type>
+    {
+        using return_type = typename std::invoke_result<F, Args...>::type;
+        auto task = std::make_shared<std::packaged_task<return_type()>>(
+            std::bind(std::forward<F>(f), std::forward<Args>(args)...));
+        auto res = task->get_future();
+        {
+            std::lock_guard<std::mutex> lock(queueMutex_);
+            if (stopFlag_)
+            {
+                throw std::runtime_error("enqueue on stopped ThreadPool");
+            }
+            tasks_.emplace([task]()
+                           { (*task)(); });
+        }
+        condition_.notify_one(); // 唤醒一个等待的worker线程
+        return res;              // 返回future对象
+    }
 
 private:
     std::vector<std::thread> workers_;        // worker线程列表

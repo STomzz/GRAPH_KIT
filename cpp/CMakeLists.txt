@@ -11,14 +11,14 @@ set(Frame_Source_files
 )
 
 # 根据选项选择线程池版本
-if(USE_THREAD_POOL_V2)
+if(USE_THREAD_POOL_V3)
+    message(STATUS "Using ThreadPoolV3")
+    list(APPEND Frame_Source_files ${CMAKE_SOURCE_DIR}/cpp/ThreadPoolv3.cpp)
+elseif(USE_THREAD_POOL_V2)
     message(STATUS "Using ThreadPoolV2")
     list(APPEND Frame_Source_files ${CMAKE_SOURCE_DIR}/cpp/ThreadPoolv2.cpp)
 else()
-    message(STATUS "Using ThreadPool")
-
-    # 为ThreadPool版本定义宏
-    add_definitions(-DUSE_THREAD_POOL_V1)
+    message(STATUS "Using ThreadPoolV1")
     list(APPEND Frame_Source_files ${CMAKE_SOURCE_DIR}/cpp/ThreadPool.cpp)
 endif()
 
