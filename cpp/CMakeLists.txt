@@ -13,7 +13,6 @@ set(Frame_Source_files
 # 根据选项选择线程池版本
 if(USE_THREAD_POOL_V3)
     message(STATUS "[CMAKE]--->Using ThreadPoolV3")
-
     list(APPEND Frame_Source_files ${CMAKE_SOURCE_DIR}/cpp/ThreadPoolv3.cpp)
 elseif(USE_THREAD_POOL_V2)
     message(STATUS "[CMAKE]--->Using ThreadPoolV2")
