@@ -113,6 +113,10 @@ case $COMMAND in
         echo "清理完成。"
         ;;
         
+    clean)
+        echo "debug..."
+        
+        ;;
     *)
         echo "Usage: ./build.sh [build|run|clean] [v1|v2|v3]"
         exit 1

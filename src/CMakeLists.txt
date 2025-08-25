@@ -10,4 +10,4 @@ file(GLOB_RECURSE Source_files
 
 add_executable(mytest ${Source_files})
 
-target_link_libraries(mytest Graph_KIT)
+target_link_libraries(mytest Graph_KIT layer_node)
