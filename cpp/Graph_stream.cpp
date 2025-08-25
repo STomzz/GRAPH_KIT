@@ -43,6 +43,7 @@ void GraphStream::addDependency(BaseNode *current_node, BaseNode *dependent_inpu
     addNode(current_node);
     addNode(dependent_input_node);
     {
+        current_node->addInput(dependent_input_node);
         // node_successors_ 未做重复性检查
         std::lock_guard<std::mutex> lock(successor_mutex);
         node_successors_[dependent_input_node].push_back(current_node);

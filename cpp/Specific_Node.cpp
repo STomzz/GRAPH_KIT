@@ -1,9 +1,13 @@
 #include "Specific_Node.h"
-
-MultiplyBy2Node::MultiplyBy2Node(std::initializer_list<BaseNode *> inputs) : BaseNode(inputs) {}
+// 示例实现
+MultiplyBy2Node::MultiplyBy2Node() : BaseNode() {}
 
 void MultiplyBy2Node::execute()
 {
+    if (getInputs().empty())
+    {
+        throw std::runtime_error("MultiplyBy2Node requires at least one input");
+    }
     size_t size = getInputs()[0]->getOutput().size();
     {
         std::lock_guard<std::mutex> lock(outputMutex_);
@@ -15,13 +19,7 @@ void MultiplyBy2Node::execute()
     }
 }
 
-AddNode::AddNode(std::initializer_list<BaseNode *> inputs) : BaseNode(inputs)
-{
-    if (inputs.size() == 0)
-    {
-        throw std::invalid_argument("AddNode must have at least one input");
-    }
-}
+AddNode::AddNode() : BaseNode() {}
 
 void AddNode::execute()
 {
